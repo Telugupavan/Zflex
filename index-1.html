@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZFlix - Stream Unlimited Movies & TV Shows</title>
+    <style>
+        :root {
+            --primary: #e50914;
+            --dark: #141414;
+            --light: #f4f4f4;
+            --gray: #999;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+        }
+        
+        /* Header Styles */
+        header {
+            padding: 20px 50px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            color: var(--primary);
+            font-size: 2rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 20px;
+        }
+        
+        nav ul li a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        nav ul li a:hover {
+            color: var(--gray);
+        }
+        
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: url('https://i.pinimg.com/736x/83/f3/71/83f3712390a139290d40fc7fa688bcc9.jpg') no-repeat center center/cover;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 50px;
+        }
+        
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 600px;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+        
+        .cta-button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.2rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .cta-button:hover {
+            background-color: #f40612;
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 80px 50px;
+            text-align: center;
+        }
+        
+        .features h2 {
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+        
+        .feature-card {
+            padding: 30px;
+        }
+        
+        .feature-card i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+        
+        /* Movies Section */
+        .movies {
+            padding: 50px;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .section-header h2 {
+            font-size: 1.8rem;
+        }
+        
+        .see-all {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .movies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .movie-card {
+            position: relative;
+            border-radius: 5px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .movie-card img {
+            width: 100%;
+            display: block;
+            transition: transform 0.3s;
+        }
+        
+        .movie-card:hover img {
+            transform: scale(1.05);
+        }
+        
+        .movie-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);
+            padding: 20px;
+        }
+        
+        .movie-info h3 {
+            margin-bottom: 5px;
+        }
+        
+        .movie-meta {
+            display: flex;
+            justify-content: space-between;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        /* NEW: Movie Description Styles */
+        .movie-description {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.9);
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            overflow-y: auto;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .movie-card:hover .movie-description {
+            opacity: 1;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #000;
+            padding: 50px;
+            text-align: center;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+        
+        .footer-links a {
+            color: var(--gray);
+            margin: 0 15px;
+            text-decoration: none;
+        }
+        
+        .footer-links a:hover {
+            color: var(--light);
+        }
+        
+        .copyright {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <a href="#" class="logo">ZFlix</a>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Movies</a></li>
+                <li><a href="#">TV Shows</a></li>
+                <li><a href="#">New Releases</a></li>
+                <li><a href="#">My List</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Unlimited movies, TV shows, and more.</h1>
+            <p>Watch anywhere. Cancel anytime. Ready to watch? Enter your email to create or restart your membership.</p>
+            <a href="#" class="cta-button">Get Started <i class="fas fa-chevron-right"></i></a>
+        </div>
+    </section>
+    
+    <section class="features">
+        <h2>Why Choose ZFlix?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <i class="fas fa-tv"></i>
+                <h3>Watch Anywhere</h3>
+                <p>Stream on your phone, tablet, laptop, and TV without paying more.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-gem"></i>
+                <h3>Exclusive Content</h3>
+                <p>Access to original content you can't find anywhere else.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-bolt"></i>
+                <h3>No Ads</h3>
+                <p>Enjoy all your favorite shows and movies without any interruptions.</p>
+            </div>
+        </div>
+    </section>
+    
+    <section class="movies">
+        <div class="section-header">
+            <h2>Popular on ZFlix</h2>
+            <a href="#" class="see-all">See All</a>
+        </div>
+        <div class="movies-grid">
+            <div class="movie-card">
+                <img src="https://i.pinimg.com/736x/fc/a2/9d/fca29d87e439318acccd922eb5fb1eee.jpg" alt="MICKEY 17">
+                <div class="movie-info">
+                    <h3>MICKEY 17</h3>
+                    <div class="movie-meta">
+                        <span>2025</span>
+                        <span>HD</span>
+                    </div>
+                </div>
+                <div class="movie-description">
+                    <p>An expendable employee on a human expedition to colonize an ice world gets resurrected after each death with most memories intact, leading to an existential crisis when a replacement arrives.</p>
+                </div>
+            </div>
+            
+            <div class="movie-card">
+                <img src="https://i.pinimg.com/736x/16/02/21/16022112cef6da58053e72138d6ed778.jpg" alt="RRR">
+                <div class="movie-info">
+                    <h3>RRR</h3>
+                    <div class="movie-meta">
+                        <span>2022</span>
+                        <span>HD</span>
+                    </div>
+                </div>
+                <div class="movie-description">
+                    <p>A fictional story about two Indian revolutionaries, Alluri Sitarama Raju and Komaram Bheem, who fought against the British Raj and Nizam of Hyderabad respectively.</p>
+                </div>
+            </div>
+            
+            <div class="movie-card">
+                <img src="https://i.pinimg.com/736x/86/24/4f/86244f757e85a2baadbb08087b9f10b7.jpg" alt="SOLO LEVELLING">
+                <div class="movie-info">
+                    <h3>SOLO LEVELLING</h3>
+                    <div class="movie-meta">
+                        <span>2025</span>
+                        <span>HD</span>
+                    </div>
+                </div>
+                <div class="movie-description">
+                    <p>In a world where hunters battle monsters emerging from dimensional gates, the weakest hunter Sung Jin-Woo gains an extraordinary ability to level up in strength, changing his destiny forever.</p>
+                </div>
+            </div>
+            
+            <div class="movie-card">
+                <img src="https://i.pinimg.com/736x/7e/7b/3f/7e7b3ffc29378ae09015c4ad34e39cfa.jpg" alt="Cars">
+                <div class="movie-info">
+                    <h3>Cars</h3>
+                    <div class="movie-meta">
+                        <span>2006</span>
+                        <span>HD</span>
+                    </div>
+                </div>
+                <div class="movie-description">
+                    <p>Hotshot rookie race car Lightning McQueen gets waylaid in Radiator Springs, where he finds friendship and learns there's more to life than trophies and fame.</p>
+                </div>
+            </div>
+            
+            <div class="movie-card">
+                <img src="https://i.pinimg.com/736x/d8/9e/b0/d89eb04d03c62acb1d463d50db4560ce.jpg" alt="Fight Club">
+                <div class="movie-info">
+                    <h3>FIGHT CLUB</h3>
+                    <div class="movie-meta">
+                        <span>1999</span>
+                        <span>HD</span>
+                    </div>
+                </div>
+                <div class="movie-description">
+                    <p>An insomniac office worker and a devil-may-care soapmaker form an underground fight club that evolves into something much, much more.</p>
+                </div>
+            </div>
+            
+            <div class="movie-card">
+                <img src="https://i.pinimg.com/736x/36/80/a5/3680a5bf6263761fc650af0974568b3d.jpg" alt="Arcane">
+                <div class="movie-info">
+                    <h3>ARCANE</h3>
+                    <div class="movie-meta">
+                        <span>2021</span>
+                        <span>HD</span>
+                    </div>
+                </div>
+                <div class="movie-description">
+                    <p>Set in utopian Piltover and the oppressed underground of Zaun, the story follows the origins of two iconic League of Legends champions and the power that will tear them apart.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="movies">
+        <div class="section-header">
+            <h2>Trending Now</h2>
+            <a href="#" class="see-all">See All</a>
+        </div>
+        <div class="movies-grid">
+            <div class="movie-card">
+                <img src="https://i.pinimg.com/736x/d4/1d/ae/d41dae074d2fe0f0f79175ce0c567578.jpg" alt="NE ZHA 2">
+                <div class="movie-info">
+                    <h3>NE ZHA 2</h3>
+                    <div class="movie-meta">
+                        <span>2025</span>
+                        <span>PREHD</span>
+                    </div>
+                </div>
+                <div class="movie-description">
+                    <p>The sequel to the wildly successful Chinese animated film continues the adventures of the rebellious deity Ne Zha as he faces new threats to the heavenly order.</p>
+                </div>
+            </div>
+            
+            <!-- Additional trending movies would go here with same structure -->
+            <div class="movie-card">
+                <img src="https://i.pinimg.com/736x/b7/95/44/b795447414c34b18eddc91fdea0fffef.jpg" alt="DUNE: PART TWO">
+                <div class="movie-info">
+                    <h3>DUNE: PART TWO</h3>
+                    <div class="movie-meta">
+                        <span>2024</span>
+                        <span>4K</span>
+                    </div>
+                </div>
+                <div class="movie-description">
+                    <p>Paul Atreides unites with the Fremen to seek revenge against those who destroyed his family while grappling with his prescient visions of a terrible future.</p>
+                </div>
+            </div>
+            
+            <div class="movie-card">
+                <img src="https://i.pinimg.com/736x/e3/bf/9e/e3bf9e04cc68a7229019cf6db6b93c7e.jpg" alt="THE BATMAN">
+                <div class="movie-info">
+                    <h3>THE BATMAN</h3>
+                    <div class="movie-meta">
+                        <span>2022</span>
+                        <span>4K</span>
+                    </div>
+                </div>
+                <div class="movie-description">
+                    <p>In his second year of fighting crime, Batman uncovers corruption in Gotham City that connects to his own family while facing a serial killer known as the Riddler.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="footer-links">
+            <a href="#">About Us</a>
+            <a href="#">Terms of Use</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">FAQ</a>
+            <a href="#">Contact Us</a>
+        </div>
+        <p class="copyright">© 2023 ZFlix. All Rights Reserved.</p>
+    </footer>
+</body>
+</html>
